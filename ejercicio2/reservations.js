@@ -1,6 +1,42 @@
-class Customer {}
+class Customer {
+    constructor(id, name, email){
+        this.id = id || '';
+        this.name = name || '';
+        this.email = email || '';
+    }
 
-class Reservation {}
+    get info(){
+        return `Nombre: ${this.name} Email: ${this.email}`;
+    }
+}
+
+class Reservation {
+    constructor(id, customer, date, guests){
+        if(customer.className == Customer.className){
+            this.id = id || '';
+            this.customer = customer;
+            this.date = new Date(date);
+            this.guests = guests || '';
+        }
+        else{
+            throw(Error('Invalid instance of Customer.'))
+        }
+    }
+
+    get info(){
+        return `Fecha y hora: ${this.date}<br>
+                Cliente: ${this.customer.info}<br>
+                Comensales: ${this.guests}`;
+    }
+
+    static validateReservation(reservationDate, guests){
+        const rd = new Date(reservationDate);
+        const now = new Date();
+        rd.setMilliseconds(0);
+        now.setMilliseconds(0);
+        return (rd >= now ) && (guests > 0);
+    }
+}
 
 class Restaurant {
     constructor(name) {
