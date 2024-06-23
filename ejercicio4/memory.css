@@ -43,3 +43,9 @@ img {
     max-height: 100%;
     object-fit: contain;
 }
+
+.screen-label{
+    border-radius: 0.5rem;
+    border-width: 3px;
+    border-style: solid;
+}

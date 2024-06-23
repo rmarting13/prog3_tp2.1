@@ -18,9 +18,39 @@
         <section class="section">
             <div class="container">
                 <h1 class="title">Juego de Memoria</h1>
-                <button id="restart-button" class="button is-primary">
-                    Reiniciar Juego
-                </button>
+                <div class="fixed-grid has-4-cols">
+                    <div class="grid">
+                        <button id="restart-button" class="button is-primary cell is-col-start-1">
+                            Reiniciar Juego
+                        </button>
+                        <div class="cell is-col-start-4 has-text-centered is-align-content-center mr-5 p-3 has-background-link-dark screen-label" style="border-color: hsl(217, 71%, 53%);">
+                            <div class="is-flex is-flex-direction-row is-justify-content-space-between">
+                                <span class="is-size-5 mr-3 has-text-info">
+                                    Tiempo: 
+                                </span>
+                                <span class="is-size-5 has-text-weight-bold has-text-white" id="time"> </span>
+                            </div>
+                        </div>
+                        <div class="cell is-col-start-5 has-text-centered is-align-content-center mr-5 p-3 has-background-warning-dark screen-label" style="border-color: hsl(48, 100%, 67%);">
+                            <div class="is-flex is-flex-direction-row is-justify-content-space-between">
+                                <span class="is-size-5 mr-3 has-text-warning">
+                                    Movimientos: 
+                                </span>
+                                <span class="is-size-5 has-text-weight-bold has-text-white" id="movements"></span>
+                            </div>
+                        </div>
+                        <div class="cell is-col-start-6 has-text-centered is-align-content-center p-3 has-background-danger-dark screen-label" style="border-color: hsl(348, 100%, 61%);"> 
+                            <div class="is-flex is-flex-direction-row is-justify-content-space-between">
+                                <span class="is-size-5 mr-3 has-text-danger">
+                                    Puntaje: 
+                                </span>
+                                <span class="is-size-5 has-text-weight-bold has-text-white" id="score"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
                 <div class="fixed-grid has-4-cols">
                     <div id="game-board" class="grid"></div>
                 </div>

@@ -31,6 +31,21 @@ class Card {
         const cardElement = this.element.querySelector(".card");
         cardElement.classList.remove("flipped");
     }
+
+    toggleFlip(){
+        if(this.isFlipped){
+            this.#unflip();
+            this.isFlipped = false;
+        }
+        else{
+            this.#flip();
+            this.isFlipped = true;
+        }
+    }
+
+    matches(otherCard){
+        return this.name == otherCard.name;
+    }
 }
 
 class Board {
@@ -74,6 +89,27 @@ class Board {
             this.onCardClick(card);
         }
     }
+
+    #shuffleCards(){
+        let ran;
+        let shuffled = [];
+        do{
+            ran = Math.floor(Math.random() * this.cards.length);
+            shuffled.push(this.cards[ran]);
+            this.cards.splice(ran,1);
+        }while(this.cards.length);
+        this.cards = shuffled;
+    }
+
+    #flipDownAllCards(){
+        this.cards.forEach(card => (card.isFlipped)? card.toggleFlip() : null);
+    }
+
+    reset(){
+        this.#flipDownAllCards();
+        this.#shuffleCards();
+        this.render();
+    }
 }
 
 class MemoryGame {
@@ -90,17 +126,100 @@ class MemoryGame {
         this.flipDuration = flipDuration;
         this.board.onCardClick = this.#handleCardClick.bind(this);
         this.board.reset();
+        this.movements = 0;
+        this.movementsDisplayElement = document.getElementById('movements');
+        this.timeDisplayElement = document.getElementById('time');
+        this.time = 0;
+        this.timeCounter = null;
+        this.scoreDisplayElement = document.getElementById('score');
     }
 
     #handleCardClick(card) {
         if (this.flippedCards.length < 2 && !card.isFlipped) {
+            if(!this.timeCounter){
+                this.#initTimeCounter();
+            }
             card.toggleFlip();
             this.flippedCards.push(card);
-
             if (this.flippedCards.length === 2) {
-                setTimeout(() => this.checkForMatch(), this.flipDuration);
+                setTimeout(() => this.#checkForMatch(), this.flipDuration);
+                this.#updateMovementsCounter();
             }
         }
+    }
+
+    #checkForMatch(){
+        const card1 = this.flippedCards.pop();
+        const card2 = this.flippedCards.pop();
+        if(card1.matches(card2)){
+            this.matchedCards.push(card1);
+            this.matchedCards.push(card2);
+            // Si todas las cartas hicieron match, finaliza el juego deteniendo el contador de tiempo
+            // y mostrando el puntaje obtenido:
+            if(this.matchedCards.length === this.board.cards.length){
+                this.#stopTimeCounter();
+                this.#showScore();
+            }
+        }
+        else{
+            card1.toggleFlip();
+            card2.toggleFlip();
+        }
+
+    }
+
+    #initTimeCounter(){
+        let min = 0;
+        let sec = 0;
+        let textMin, textSec;
+        this.timeCounter = setInterval(() => {
+            sec ++;
+            if(sec === 60){
+                sec = 0;
+                min++;
+            }
+            textSec = (sec < 10)? `0${sec}`: sec;
+            textMin = (min < 10)? `0${min}`: min;
+            this.timeDisplayElement.textContent = `${textMin}:${textSec}`;
+            this.time ++;
+        }, 1000);
+    }
+
+    #updateMovementsCounter(){
+        this.movements ++;
+        this.movementsDisplayElement.textContent = `${this.movements}`;
+    }
+
+    #stopTimeCounter(){
+        (this.timeCounter)? clearInterval(this.timeCounter):null;
+    }
+
+    #showScore(){
+        let score = 5000;
+        if(this.movements > 6){
+            score -= (this.movements-6)*100;
+        }
+        if(this.time > 15){
+            score -= (this.time-15)*50;
+        }
+        this.scoreDisplayElement.innerText = `${score}`;
+    }
+
+    #clearScreenValues(){
+        this.movements = 0;
+        this.movementsDisplayElement.textContent = '';
+        this.#stopTimeCounter();
+        this.timeCounter = null;
+        this.timeDisplayElement.textContent = '';
+        this.score = 0
+        this.scoreDisplayElement.textContent = '';
+    }
+
+    resetGame(){
+        this.flippedCards = [];
+        this.matchedCards = [];
+        this.board.reset();
+        this.#clearScreenValues();
     }
 }
 
